@@ -1,5 +1,5 @@
 #
-#  Be sure to run `pod spec lint CMAuidoSession_PCM.podspec' to ensure this is a
+#  Be sure to run `pod spec lint CMAudioSession_PCM.podspec' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
 #
 #  To learn more about Podspec attributes see https://guides.cocoapods.org/syntax/podspec.html
@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  spec.name         = "CMAuidoSession_PCM"
+  spec.name         = "CMAudioSession_PCM"
   spec.version      = "1.0.1"
   spec.summary      = "基于AudioUnit音频采集PCM数据流，添加WebRTC降噪模块提供降噪."
 
@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
                       基于AudioUnit音频采集PCM数据流，添加WebRTC降噪模块提供降噪
                    DESC
 
-  spec.homepage     = "https://github.com/ColdMountain/CMAuidoSession_PCM"
+  spec.homepage     = "https://github.com/ColdMountain/CMAudioSession_PCM"
   # spec.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -80,7 +80,7 @@ Pod::Spec.new do |spec|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  spec.source       = { :git => "https://github.com/ColdMountain/CMAuidoSession_PCM.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/ColdMountain/CMAudioSession_PCM.git", :tag => "#{spec.version}" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -91,7 +91,7 @@ Pod::Spec.new do |spec|
   #  Not including the public_header_files will make all headers public.
   #
 
-  # spec.source_files  = "CMAuidoSession_PCM"
+  # spec.source_files  = "CMAudioSession_PCM"
 
   spec.source_files  = "CMAudioSession_PCM.h", "CMAudioSession_PCM.m"
   # spec.exclude_files = "Classes/Exclude"
