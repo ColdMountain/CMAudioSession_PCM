@@ -55,7 +55,7 @@ int nsProcess(int16_t *buffer, uint32_t sampleRate ,int samplesCount, int level)
 }
 
 @implementation CMAudioSession_PCM
-- (instancetype)initAudioUnitWithSampleRate:(CMAudioSampleRate)audioRate{
+- (instancetype)initAudioUnitWithSampleRate:(CMAudioPCMSampleRate)audioRate{
     self = [super init];
     if (self) {
         self.audioRate = audioRate;
