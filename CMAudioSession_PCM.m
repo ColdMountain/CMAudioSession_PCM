@@ -6,7 +6,6 @@
 //
 
 #import "CMAudioSession_PCM.h"
-#import "noise_suppression.h"
 
 #define INPUT_BUS 1
 #define OUTPUT_BUS 0
@@ -22,40 +21,40 @@
 }
 @end
 
-int nsProcess(int16_t *buffer, uint32_t sampleRate ,int samplesCount, int level)
-{
-    if (buffer == 0) return -1;
-    if (samplesCount == 0) return -1;
-    size_t samples = MIN(160, sampleRate / 100);
-    if (samples == 0) return -1;
-    uint32_t num_bands = 1;
-    int16_t *input = buffer;
-    size_t nTotal = (samplesCount / samples);
-    NsHandle *nsHandle = WebRtcNs_Create();
-    int status = WebRtcNs_Init(nsHandle, sampleRate);
-    if (status != 0) {
-        printf("WebRtcNs_Init fail\n");
-        return -1;
-    }
-    status = WebRtcNs_set_policy(nsHandle, level);
-    if (status != 0) {
-        printf("WebRtcNs_set_policy fail\n");
-        return -1;
-    }
-    for (int i = 0; i < nTotal; i++) {
-        int16_t *nsIn[1] = {input};   //ns input[band][data]
-        int16_t *nsOut[1] = {input};  //ns output[band][data]
-        WebRtcNs_Analyze(nsHandle, nsIn[0]);
-        WebRtcNs_Process(nsHandle, (const int16_t *const *) nsIn, num_bands, nsOut);
-        input += samples;
-    }
-    WebRtcNs_Free(nsHandle);
-    
-    return 1;
-}
+//int nsProcess(int16_t *buffer, uint32_t sampleRate ,int samplesCount, int level)
+//{
+//    if (buffer == 0) return -1;
+//    if (samplesCount == 0) return -1;
+//    size_t samples = MIN(160, sampleRate / 100);
+//    if (samples == 0) return -1;
+//    uint32_t num_bands = 1;
+//    int16_t *input = buffer;
+//    size_t nTotal = (samplesCount / samples);
+//    NsHandle *nsHandle = WebRtcNs_Create();
+//    int status = WebRtcNs_Init(nsHandle, sampleRate);
+//    if (status != 0) {
+//        printf("WebRtcNs_Init fail\n");
+//        return -1;
+//    }
+//    status = WebRtcNs_set_policy(nsHandle, level);
+//    if (status != 0) {
+//        printf("WebRtcNs_set_policy fail\n");
+//        return -1;
+//    }
+//    for (int i = 0; i < nTotal; i++) {
+//        int16_t *nsIn[1] = {input};   //ns input[band][data]
+//        int16_t *nsOut[1] = {input};  //ns output[band][data]
+//        WebRtcNs_Analyze(nsHandle, nsIn[0]);
+//        WebRtcNs_Process(nsHandle, (const int16_t *const *) nsIn, num_bands, nsOut);
+//        input += samples;
+//    }
+//    WebRtcNs_Free(nsHandle);
+//
+//    return 1;
+//}
 
 @implementation CMAudioSession_PCM
-- (instancetype)initAudioUnitWithSampleRate:(CMAudioSampleRate)audioRate{
+- (instancetype)initAudioUnitWithSampleRate:(CMAudioPCMSampleRate)audioRate{
     self = [super init];
     if (self) {
         self.audioRate = audioRate;
@@ -227,13 +226,13 @@ static OSStatus RecordingCallback(void *inRefCon,
              /* 音频数据 音频采样率
               * 位深 降噪等级0~3
               */
-             int success =  nsProcess(speexByte,
-                                      session.audioRate,
-                                      16,
-                                      (int)session.nsLevel);
-             if (success==0) {
-                 NSLog(@"降噪失败 error:%d",success);
-             }
+//             int success =  nsProcess(speexByte,
+//                                      session.audioRate,
+//                                      16,
+//                                      (int)session.nsLevel);
+//             if (success==0) {
+//                 NSLog(@"降噪失败 error:%d",success);
+//             }
              NSData *data = [NSData dataWithBytes:speexByte length:pcmData.length];
              [session.delegate cm_audioUnitBackPCM:data];
          }
