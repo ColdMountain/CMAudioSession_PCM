@@ -247,8 +247,8 @@ static OSStatus RecordingCallback(void *inRefCon,
 - (void)cm_startAudioUnitRecorder {
     OSStatus status;
     status = AudioOutputUnitStart(audioUnit);
-    NSLog(@"开启音频");
     if (status == noErr) {
+        NSLog(@"开启音频");
     }
 }
 
@@ -256,7 +256,11 @@ static OSStatus RecordingCallback(void *inRefCon,
 - (void)cm_stopAudioUnitRecorder{
     OSStatus status = AudioOutputUnitStop(audioUnit);
     if (status == noErr) {
+        NSLog(@"停止音频");
     }
+}
+
+- (void)cm_closeAudioUnitRecorder{
     AudioUnitUninitialize(audioUnit);
     if (buffList != NULL) {
         if (buffList->mBuffers[0].mData) {
@@ -268,6 +272,7 @@ static OSStatus RecordingCallback(void *inRefCon,
     }
     AudioComponentInstanceDispose(audioUnit);
 }
+
 
 - (void)printAudioStreamBasicDescription:(AudioStreamBasicDescription)asbd {
     char formatID[5];

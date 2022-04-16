@@ -30,6 +30,7 @@ typedef enum {
 - (void)setOutputAudioPort:(AVAudioSessionPortOverride)audioSessionPortOverride;
 - (void)cm_startAudioUnitRecorder;
 - (void)cm_stopAudioUnitRecorder;
+- (void)cm_closeAudioUnitRecorder;
 
 @property (nonatomic, weak) id<CMAudioSessionPCMDelegate>delegate;
 @property (nonatomic, assign) CMAudioSampleRate audioRate;
