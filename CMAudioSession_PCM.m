@@ -155,11 +155,11 @@
      outputFormat.mChannelsPerFrame = 1;
      
     status = AudioUnitSetProperty(audioUnit,
-                          kAudioUnitProperty_StreamFormat,
-                          kAudioUnitScope_Input,
-                          OUTPUT_BUS,
-                          &outputFormat,
-                          sizeof(outputFormat));
+                                  kAudioOutputUnitProperty_EnableIO,
+                                  kAudioUnitScope_Output,
+                                  OUTPUT_BUS,
+                                  &outputFormat,
+                                  sizeof(outputFormat));
 
      if (status != noErr) {
          NSLog(@"3、AudioUnitGetProperty error, ret: %d", (int)status);
@@ -269,7 +269,10 @@ static OSStatus RecordingCallback(void *inRefCon,
         free(buffList);
         buffList = NULL;
     }
-    AudioComponentInstanceDispose(audioUnit);
+    OSStatus status = AudioComponentInstanceDispose(audioUnit);
+    if (status == noErr) {
+        NSLog(@"关闭音频");
+    }
 }
 
 
