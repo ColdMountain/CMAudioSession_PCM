@@ -80,11 +80,7 @@ Pod::Spec.new do |spec|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-<<<<<<< HEAD:CMAuidoSession_PCM.podspec
-  spec.source       = { :git => "https://github.com/ColdMountain/CMAuidoSession_PCM.git", :tag => "1.0.0" }
-=======
   spec.source       = { :git => "https://github.com/ColdMountain/CMAudioSession_PCM.git", :tag => "#{spec.version}" }
->>>>>>> 87578e78c742cdaa0761c635e09126af4b0fe32b:CMAudioSession_PCM.podspec
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -95,13 +91,9 @@ Pod::Spec.new do |spec|
   #  Not including the public_header_files will make all headers public.
   #
 
-<<<<<<< HEAD:CMAuidoSession_PCM.podspec
   spec.source_files  = "CMAudioSession_PCM.h","CMAudioSession_PCM.m","noise_suppression.h","noise_suppression.c"
-=======
-  # spec.source_files  = "CMAudioSession_PCM"
 
-  spec.source_files  = "CMAudioSession_PCM.h", "CMAudioSession_PCM.m"
->>>>>>> 87578e78c742cdaa0761c635e09126af4b0fe32b:CMAudioSession_PCM.podspec
+  # spec.source_files  = "CMAudioSession_PCM"
   # spec.exclude_files = "Classes/Exclude"
 
   # spec.public_header_files = "Classes/**/*.h"
