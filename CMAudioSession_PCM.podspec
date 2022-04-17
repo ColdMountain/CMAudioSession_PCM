@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "CMAudioSession_PCM"
-  spec.version      = "1.0.1"
+  spec.version      = "1.0.2"
   spec.summary      = "基于AudioUnit音频采集PCM数据流，添加WebRTC降噪模块提供降噪."
 
   # This description is used to generate tags and improve search results.
