@@ -18,6 +18,7 @@
     AudioStreamBasicDescription  dataFormat;
     AVAudioPlayer *audioPlayer;
     AVAudioSession *audioSession;
+    int failed_initalize;
 }
 @end
 
@@ -59,6 +60,7 @@
     if (self) {
         self.audioRate = audioRate;
         self.nsLevel = 0;
+        failed_initalize = 0;
         [self relocationAudio];
         [self initAudioComponent];
     }
@@ -80,20 +82,20 @@
 //                                        AVAudioSessionCategoryOptionDefaultToSpeaker
                                   error:nil];
     //设置I/O的buffer buffer越小延迟越低
-    NSTimeInterval bufferDyration = 0.01;
-    [audioSession setPreferredIOBufferDuration:bufferDyration error:&error];
+//    NSTimeInterval bufferDyration = 0.01;
+//    [audioSession setPreferredIOBufferDuration:bufferDyration error:&error];
 //    [audioSession setPreferredSampleRate:8000 error:&error]; 此代码会让 AirPods 在录制音频的时候 失真
     
     //set USB AUDIO device as high priority: iRig mic HD
-    for (AVAudioSessionPortDescription *inputPort in [audioSession availableInputs])
-    {
-        if([inputPort.portType isEqualToString:AVAudioSessionPortUSBAudio])
-        {
-            [audioSession setPreferredInput:inputPort error:&error];
-            [audioSession setPreferredInputNumberOfChannels:1 error:&error];
-            break;
-        }
-    }
+//    for (AVAudioSessionPortDescription *inputPort in [audioSession availableInputs])
+//    {
+//        if([inputPort.portType isEqualToString:AVAudioSessionPortUSBAudio])
+//        {
+//            [audioSession setPreferredInput:inputPort error:&error];
+//            [audioSession setPreferredInputNumberOfChannels:1 error:&error];
+//            break;
+//        }
+//    }
     success = [audioSession setActive:YES error:nil];
 }
 
@@ -176,6 +178,18 @@
         NSLog(@"4、AudioUnitGetProperty error, ret: %d", (int)status);
     }
     
+    //AGC 增益 依赖 kAudioUnitSubType_VoiceProcessingIO
+    UInt32 enable_agc = 1;
+    status = AudioUnitSetProperty(audioUnit,
+                                  kAUVoiceIOProperty_VoiceProcessingEnableAGC,
+                                  kAudioUnitScope_Global,
+                                  INPUT_BUS,
+                                  &enable_agc,
+                                  sizeof(enable_agc));
+    if (status != noErr) {
+        NSLog(@"Failed to enable the built-in AGC. " "Error=%d", (int)status);
+    }
+    
     // 设置数据采集回调函数
     AURenderCallbackStruct recordCallback;
     recordCallback.inputProc = RecordingCallback;
@@ -242,12 +256,58 @@ static OSStatus RecordingCallback(void *inRefCon,
     return noErr;
 }
 
+//回音消除
+- (void)cm_startEchoAudio:(int)echoStatus{
+    OSStatus status;
+    UInt32 echoCancellation;
+    UInt32 size = sizeof(echoCancellation);
+    status = AudioUnitGetProperty(audioUnit,
+                                  kAUVoiceIOProperty_BypassVoiceProcessing,
+                                  kAudioUnitScope_Global,
+                                  OUTPUT_BUS,
+                                  &echoCancellation,
+                                  &size);
+    if (status != noErr){
+        NSLog(@"kAUVoiceIOProperty_BypassVoiceProcessing failed %d", (int)status);
+    }
+    
+    if (echoStatus == echoCancellation){
+        return;
+    }
+    status = AudioUnitSetProperty(audioUnit,
+                                  kAUVoiceIOProperty_BypassVoiceProcessing,
+                                  kAudioUnitScope_Global,
+                                  OUTPUT_BUS,
+                                  &echoStatus,
+                                  sizeof(echoStatus));
+    if (status != noErr){
+        NSLog(@"kAUVoiceIOProperty_BypassVoiceProcessing failed %d", (int)status);
+    }
+}
+
 //开启AudioUnit
 - (void)cm_startAudioUnitRecorder {
     OSStatus status;
+    status = AudioUnitInitialize(audioUnit);
+    
+    while (status != noErr) {
+        NSLog(@"Failed to initialize the Voice Processing I/O unit. "
+                     "Error=%ld.",
+                    (long)status);
+        failed_initalize++;
+        if (failed_initalize == 5) {
+            //重试5次
+          // Max number of initialization attempts exceeded, hence abort.
+        }
+        [NSThread sleepForTimeInterval:0.1f];
+        status = AudioUnitInitialize(audioUnit);
+      }
     status = AudioOutputUnitStart(audioUnit);
     if (status == noErr) {
         NSLog(@"开启音频");
+    }else {
+        NSLog(@"AudioUnitInitialize: %p %d", audioUnit, status);
+        NSLog(@"AudioOutputUnitStart: %p %d", audioUnit, status);
     }
 }
 
