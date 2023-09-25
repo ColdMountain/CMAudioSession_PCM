@@ -218,12 +218,16 @@ static OSStatus RecordingCallback(void *inRefCon,
     CMAudioSession_PCM *session = (__bridge CMAudioSession_PCM *)inRefCon;
     OSStatus status = noErr;
     UInt16 numSamples = inNumberFrames*1;
+    
+    uint8_t  kAudioCaptureData[numSamples * sizeof(UInt32)];
+    int32_t  kAudioCaptureSize           = inNumberFrames * 2;
+    
      if (inNumberFrames > 0) {
          session->buffList = (AudioBufferList *)malloc(sizeof(AudioBufferList));
          session->buffList->mNumberBuffers = 1;
          session->buffList->mBuffers[0].mNumberChannels = 1;
-         session->buffList->mBuffers[0].mDataByteSize = numSamples * sizeof(UInt16);
-         session->buffList->mBuffers[0].mData = malloc(numSamples * sizeof(UInt16));
+         session->buffList->mBuffers[0].mDataByteSize = kAudioCaptureSize;
+         session->buffList->mBuffers[0].mData = kAudioCaptureData;
          status = AudioUnitRender(session->audioUnit,
                                   ioActionFlags,
                                   inTimeStamp,
